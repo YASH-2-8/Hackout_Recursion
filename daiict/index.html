@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coastal Threat Alert System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container-fluid">
+            <div class="container">
+                <a class="navbar-brand" href="#">
+                    <i class="fas fa-water me-2"></i>Coastal Threat Alert System
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#dashboard">Dashboard</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#alerts">Alerts</a>
+                        </li>
+                        <li class="nav-item">
+                            <button class="btn btn-outline-light ms-2" data-bs-toggle="modal" data-bs-target="#loginModal">Login</button>
+                        </li>
+                        <li class="nav-item">
+                            <div class="theme-switch-wrapper">
+                                <label class="theme-switch" for="checkbox">
+                                    <input type="checkbox" id="checkbox" />
+                                    <div class="slider round"></div>
+                                </label>
+                                <div class="theme-text">Dark Mode</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Modal -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Login to Coastal Threat Alert System</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-pills mb-3 justify-content-center" id="loginTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="phone-tab" data-bs-toggle="pill" data-bs-target="#phone" type="button" role="tab">
+                                <i class="fas fa-mobile-alt me-1"></i> Phone
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="email-tab" data-bs-toggle="pill" data-bs-target="#email" type="button" role="tab">
+                                <i class="fas fa-envelope me-1"></i> Email
+                            </button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content" id="loginTabsContent">
+                        <!-- Phone Login -->
+                        <div class="tab-pane fade show active" id="phone" role="tabpanel">
+                            <div id="phoneLoginStep1">
+                                <div class="mb-3">
+                                    <label for="phoneNumber" class="form-label">Phone Number</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                                        <input type="tel" class="form-control" id="phoneNumber" placeholder="Enter your phone number">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary w-100" id="sendOtpPhone">Send OTP</button>
+                            </div>
+                            
+                            <div id="phoneLoginStep2" style="display: none;">
+                                <p class="text-muted">We've sent a verification code to <span id="phoneNumberDisplay"></span></p>
+                                <div class="mb-3">
+                                    <label for="phoneOtp" class="form-label">Enter OTP</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                        <input type="text" class="form-control" id="phoneOtp" placeholder="Enter 6-digit OTP" maxlength="6">
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span id="otpCountdown" class="text-muted">02:00</span>
+                                    <a href="#" id="resendOtpPhone" class="text-primary" style="display: none;">Resend OTP</a>
+                                </div>
+                                <button type="button" class="btn btn-primary w-100 mb-2" id="verifyPhoneOtp">Verify & Login</button>
+                                <button type="button" class="btn btn-outline-secondary w-100" id="backToPhoneEntry">Change Phone Number</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Email Login -->
+                        <div class="tab-pane fade" id="email" role="tabpanel">
+                            <div id="emailLoginStep1">
+                                <div class="mb-3">
+                                    <label for="emailAddress" class="form-label">Email Address</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                        <input type="email" class="form-control" id="emailAddress" placeholder="Enter your email address">
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-primary w-100" id="sendOtpEmail">Send OTP</button>
+                            </div>
+                            
+                            <div id="emailLoginStep2" style="display: none;">
+                                <p class="text-muted">We've sent a verification code to <span id="emailAddressDisplay"></span></p>
+                                <div class="mb-3">
+                                    <label for="emailOtp" class="form-label">Enter OTP</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-key"></i></span>
+                                        <input type="text" class="form-control" id="emailOtp" placeholder="Enter 6-digit OTP" maxlength="6">
+                                    </div>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <span id="emailOtpCountdown" class="text-muted">02:00</span>
+                                    <a href="#" id="resendOtpEmail" class="text-primary" style="display: none;">Resend OTP</a>
+                                </div>
+                                <button type="button" class="btn btn-primary w-100 mb-2" id="verifyEmailOtp">Verify & Login</button>
+                                <button type="button" class="btn btn-outline-secondary w-100" id="backToEmailEntry">Change Email Address</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-3">
+                        <p class="mb-0">By continuing, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Success Toast -->
+    <div class="toast-container position-fixed top-0 end-0 p-3">
+        <div id="loginSuccessToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header bg-success text-white">
+                <i class="fas fa-check-circle me-2"></i>
+                <strong class="me-auto">Success</strong>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                You have successfully logged in!
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container text-center position-relative">
+            <h1 class="display-4 fw-bold">Protecting Our Coasts with AI</h1>
+            <p class="lead">A high-tech watchdog monitoring for cyclones, floods, pollution, and algal blooms</p>
+            <a href="#dashboard" class="btn btn-light btn-lg mt-3">View Live Dashboard</a>
+        </div>
+    </section>
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="py-5">
+        <div class="container">
+            <h2 class="text-center section-title">Live Monitoring Dashboard</h2>
+            
+            <div class="row mb-4">
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                            <h5 class="mb-0"><i class="fas fa-map me-2"></i>Coastal Threat Map</h5>
+                            <div>
+                                <span class="badge bg-info">Live</span>
+                            </div>
+                        </div>
+                        <div class="card-body position-relative">
+                            <div class="location-status">
+                                <i class="fas fa-satellite me-1"></i>
+                                <span id="locationStatus">Monitoring active</span>
+                            </div>
+                            <div class="map-container">
+                                <div id="coastalMap"></div>
+                                <div class="map-legend">
+                                    <h6>Threat Legend</h6>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #dc3545;"></div>
+                                        <span>Cyclone Warning</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #fd7e14;"></div>
+                                        <span>Flood Risk</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #ffc107;"></div>
+                                        <span>Pollution Alert</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="legend-color" style="background-color: #20c997;"></div>
+                                        <span>Algal Bloom</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-4">
+                    <div class="card alert-card">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0"><i class="fas fa-exclamation-triangle me-2"></i>Active Alerts</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert-list">
+                                <div class="alert alert-warning">
+                                    <h6><i class="fas fa-wind me-2"></i>Cyclone Warning</h6>
+                                    <p class="small mb-0">Cyclone forming in Bay of Bengal. Expected to make landfall in 72 hours.</p>
+                                </div>
+                                <div class="alert alert-info">
+                                    <h6><i class="fas fa-water me-2"></i>High Tide Alert</h6>
+                                    <p class="small mb-0">High tides expected in coastal areas of Tamil Nadu tonight.</p>
+                                </div>
+                                <div class="alert alert-secondary">
+                                    <h6><i class="fas fa-shield-alt me-2"></i>No Pollution Detected</h6>
+                                    <p class="small mb-0">All pollution sensors reporting normal levels.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card info-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-temperature-high feature-icon"></i>
+                            <h5>Sea Temperature</h5>
+                            <h3>28.7°C</h3>
+                            <p class="text-success"><i class="fas fa-arrow-down me-1"></i> Normal range</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="card warning-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-wind feature-icon"></i>
+                            <h5>Wind Speed</h5>
+                            <h3>45 km/h</h3>
+                            <p class="text-warning"><i class="fas fa-arrow-up me-1"></i> Increasing</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="card success-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-tint feature-icon"></i>
+                            <h5>Water Quality</h5>
+                            <h3>92%</h3>
+                            <p class="text-success"><i class="fas fa-check-circle me-1"></i> Optimal</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-3">
+                    <div class="card info-card text-center">
+                        <div class="card-body">
+                            <i class="fas fa-satellite feature-icon"></i>
+                            <h5>Active Sensors</h5>
+                            <h3>187/192</h3>
+                            <p class="text-success"><i class="fas fa-check-circle me-1"></i> 97% operational</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Cyclone Probability Forecast</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="cycloneChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-chart-area me-2"></i>Flood Risk Assessment</h5>
+                        </div>
+                        <div class="card-body">
+                            <canvas id="floodChart" height="250"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Location Tracking Section -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0"><i class="fas fa-location-arrow me-2"></i>Location Tracking</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="location-tracing">
+                                <div class="tracing-controls">
+                                    <button id="enableLocation" class="btn btn-primary">
+                                        <i class="fas fa-location-circle me-1"></i> Enable Location Tracking
+                                    </button>
+                                    <button id="disableLocation" class="btn btn-secondary" disabled>
+                                        <i class="fas fa-location-slash me-1"></i> Disable Tracking
+                                    </button>
+                                    <button id="simulateLocation" class="btn btn-info">
+                                        <i class="fas fa-map-marker-alt me-1"></i> Simulate Location
+                                    </button>
+                                </div>
+                                
+                                <div class="tracing-status status-inactive" id="tracingStatus">
+                                    <i class="fas fa-times-circle me-1"></i> Location tracing disabled
+                                </div>
+                                
+                                <div class="location-details mt-3">
+                                    <h6>Current Location Details:</h6>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <p><strong>Latitude:</strong> <span id="latitude">--</span></p>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <p><strong>Longitude:</strong> <span id="longitude">--</span></p>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <p><strong>Accuracy:</strong> <span id="accuracy">--</span></p>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <p><strong>Last Update:</strong> <span id="lastUpdate">--</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Alert Notification (Fixed Position) -->
+    <div class="alert alert-warning alert-dismissible fade show alert-notification" role="alert" id="liveAlert">
+        <div class="d-flex">
+            <div class="me-3">
+                <i class="fas fa-exclamation-circle fa-2x"></i>
+            </div>
+            <div>
+                <h5 class="alert-heading">New Alert: Cyclone Warning</h5>
+                <p class="mb-0">A cyclone is forming in the Bay of Bengal. Expected to make landfall in 72 hours.</p>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-5">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+                    <h5>Coastal Threat Alert System</h5>
+                    <p>Protecting our coastlines with advanced AI technology and real-time monitoring.</p>
+                </div>
+                <div class="col-md-4">
+                    <h5>Quick Links</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="#dashboard" class="text-white">Dashboard</a></li>
+                        <li><a href="#alerts" class="text-white">Alerts</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-4">
+                    <h5>Connect With Us</h5>
+                    <div class="d-flex">
+                        <a href="#" class="text-white me-3"><i class="fab fa-twitter fa-2x"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-facebook fa-2x"></i></a>
+                        <a href="#" class="text-white me-3"><i class="fab fa-linkedin fa-2x"></i></a>
+                        <a href="#" class="text-white"><i class="fab fa-github fa-2x"></i></a>
+                    </div>
+                </div>
+            </div>
+            <hr class="mt-4 bg-light">
+            <div class="text-center">
+                <p class="mb-0">© 2023 Coastal Threat Alert System. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap & jQuery JS -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Custom JavaScript -->
+    <script src="script.js"></script>
+</body>
+</html>
