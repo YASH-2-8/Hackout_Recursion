@@ -1,18 +1,5 @@
+/* --- Global Variables & Body Styling --- */
 :root {
-    --primary-color: #0d6efd;
-    --secondary-color: #0dcaf0;
-    --danger-color: #dc3545;
-    --warning-color: #ffc107;
-    --success-color: #198754;
-    --body-bg: #f8f9fa;
-    --body-color: #333;
-    --card-bg: #ffffff;
-    --header-bg: linear-gradient(90deg, #0d6efd, #0dcaf0);
-    --footer-bg: linear-gradient(90deg, #0d6efd, #0dcaf0);
-    --text-muted: #6c757d;
-}
-
-[data-theme="dark"] {
     --primary-color: #dc3545;
     --secondary-color: #e35d6a;
     --danger-color: #dc3545;
@@ -30,7 +17,6 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: var(--body-bg);
     color: var(--body-color);
-    transition: background-color 0.3s, color 0.3s;
     background: url('https://images.pexels.com/photos/551615/pexels-photo-551615.jpeg?cs=srgb&dl=pexels-katlovessteve-551615.jpg&fm=jpg') no-repeat center center fixed;
     background-size: cover;
     position: relative;
@@ -43,15 +29,12 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(18, 18, 18, 0.7);
+    backdrop-filter: blur(3px);
     z-index: -1;
-    transition: background 0.3s;
 }
 
-[data-theme="dark"] body::before {
-    background: rgba(0, 0, 0, 0.7);
-}
-
+/* --- Reusable Components & Sections --- */
 .navbar {
     background: var(--header-bg);
 }
@@ -61,103 +44,36 @@ body::before {
     padding: 100px 0;
     color: white;
     text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.7);
-    position: relative;
     border-radius: 10px;
-    margin: 20px 0;
+    margin: 20px;
+}
+
+#dashboard .container {
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 15px;
+    padding: 20px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(5px);
 }
 
 .card {
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
-    margin-bottom: 20px;
     border: none;
-    background-color: var(--card-bg);
+    background: rgba(30, 30, 30, 0.85);
     color: var(--body-color);
-    backdrop-filter: blur(5px);
-    background: rgba(255, 255, 255, 0.9);
-}
-
-[data-theme="dark"] .card {
-    background: rgba(30, 30, 30, 0.9);
 }
 
 .card:hover {
     transform: translateY(-5px);
 }
 
-.alert-card {
-    border-left: 5px solid var(--danger-color);
-}
-
-.warning-card {
-    border-left: 5px solid var(--warning-color);
-}
-
-.success-card {
-    border-left: 5px solid var(--success-color);
-}
-
-.info-card {
-    border-left: 5px solid var(--primary-color);
-}
-
-.dashboard-card {
-    height: 100%;
-}
-
-.map-container {
-    height: 400px;
-    background-color: #e9ecef;
-    border-radius: 10px;
-    overflow: hidden;
-    position: relative;
-}
-
-#coastalMap {
-    height: 100%;
-    width: 100%;
-    border-radius: 10px;
-    z-index: 10;
-}
-
-.location-status {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 1000;
-    background: white;
-    padding: 5px 10px;
-    border-radius: 5px;
-    font-size: 0.9rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-.alert-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-}
-
-.feature-icon {
-    font-size: 2.5rem;
-    color: var(--primary-color);
-    margin-bottom: 15px;
-}
-
-.alert-notification {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 1050;
-    max-width: 350px;
-    display: none;
-}
-
 .section-title {
     position: relative;
     padding-bottom: 15px;
-    margin-bottom: 30px;
+    margin-bottom: 40px;
     color: var(--body-color);
 }
 
@@ -165,8 +81,9 @@ body::before {
     content: '';
     position: absolute;
     bottom: 0;
-    left: 0;
-    width: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
     height: 3px;
     background-color: var(--primary-color);
 }
@@ -179,261 +96,253 @@ footer {
     border-radius: 10px 10px 0 0;
 }
 
-.map-legend {
-    position: absolute;
-    bottom: 10px;
-    left: 10px;
-    z-index: 1000;
-    background: white;
+/* --- Dashboard Specific Styles --- */
+.alert-card { border-left: 5px solid var(--danger-color); }
+.warning-card { border-left: 5px solid var(--warning-color); }
+.success-card { border-left: 5px solid var(--success-color); }
+.info-card { border-left: 5px solid var(--primary-color); }
+
+.feature-icon {
+    font-size: 2.5rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+}
+
+.map-container {
+    height: 500px;
+    border-radius: 0 0 10px 10px;
+    overflow: hidden;
+}
+
+#coastalMap {
+    height: 100%;
+    width: 100%;
+}
+
+.alert-list {
+    max-height: 450px;
+    overflow-y: auto;
+}
+
+/* --- Location Tracking Styles --- */
+.location-tracing {
+    background-color: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.tracing-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.tracing-status {
     padding: 10px;
     border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    font-size: 0.8rem;
+    font-size: 0.9rem;
+    border: 1px solid transparent;
 }
 
-.legend-item {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
+.status-active { background-color: rgba(25, 135, 84, 0.2); color: #75b798; border-color: rgba(25, 135, 84, 0.5); }
+.status-inactive { background-color: rgba(108, 117, 125, 0.2); color: #adb5bd; border-color: rgba(108, 117, 125, 0.5); }
+.status-error { background-color: rgba(220, 53, 69, 0.2); color: #f1aeb5; border-color: rgba(220, 53, 69, 0.5); }
+.status-requesting { background-color: rgba(13, 202, 240, 0.2); color: #9eeaf9; border-color: rgba(13, 202, 240, 0.5); }
+.status-simulated { background-color: rgba(13, 202, 240, 0.2); color: #9eeaf9; border-color: rgba(13, 202, 240, 0.5); }
+
+/* --- Modals and Notifications --- */
+.modal-content, .toast {
+    background-color: var(--card-bg);
+    color: var(--body-color);
 }
 
-.legend-color {
-    width: 15px;
-    height: 15px;
-    margin-right: 5px;
-    border-radius: 50%;
+.modal-header, .toast-header {
+    border-bottom: 1px solid #cf4848;
 }
 
-/* Login Modal Styles */
-#loginModal .nav-pills .nav-link {
-    color: #495057;
-    border-radius: 0.25rem;
+.btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
 }
 
-#loginModal .nav-pills .nav-link.active {
-    background-color: var(--primary-color);
+#accountList .list-group-item {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(136, 49, 49, 0.2);
+    color: var(--body-color);
+}
+
+.dropdown-menu {
+    background-color: var(--card-bg);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.dropdown-item { color: var(--body-color); }
+.dropdown-item:hover, .dropdown-item:focus { background-color: var(--primary-color); color: white; }
+.dropdown-item i { width: 20px; /* Align icons */ }
+
+/* --- Utility & Overrides --- */
+.threat-icon, .user-location-icon, .historical-threat-icon {
+    background: transparent !important;
+    border: none !important;
+    text-shadow: 0 0 5px black;
+}
+.historical-threat-icon { opacity: 0.7; }
+.form-control { background-color: #343a40; color: white; border: 1px solid #6c757d; }
+.form-control:focus { background-color: #495057; color: white; border-color: var(--primary-color); box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.5); }
+
+/* --- Color Theme Overrides --- */
+.btn-primary { background-color: var(--primary-color); border-color: var(--primary-color); }
+.btn-primary:hover { background-color: var(--secondary-color); border-color: var(--secondary-color); }
+.btn-outline-primary { color: var(--primary-color); border-color: var(--primary-color); }
+.btn-outline-primary:hover { color: #fff; background-color: var(--primary-color); border-color: var(--primary-color); }
+.bg-primary { background-color: var(--primary-color) !important; }
+.badge.bg-info, .btn-info { background-color: var(--secondary-color) !important; border-color: var(--secondary-color) !important; }
+
+/* --- Chatbot Styles --- */
+.chatbot-container {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 1050;
+}
+
+.chatbot-toggle-btn {
+    width: 60px;
+    height: 60px;
+    background: var(--primary-color);
     color: white;
-}
-
-#loginModal .input-group-text {
-    background-color: #f8f9fa;
-}
-
-.otp-input {
-    letter-spacing: 10px;
-    font-size: 1.5rem;
-    text-align: center;
-}
-
-/* Toast Styles */
-.toast {
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-}
-
-.theme-switch-wrapper {
+    border: none;
+    border-radius: 50%;
+    font-size: 1.8rem;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     display: flex;
+    justify-content: center;
     align-items: center;
-    margin-left: 15px;
+    transition: transform 0.3s ease, background-color 0.3s ease;
 }
 
-.theme-switch {
-    display: inline-block;
-    height: 24px;
-    position: relative;
-    width: 50px;
+.chatbot-toggle-btn:hover {
+    transform: scale(1.1);
+    background-color: var(--secondary-color);
 }
 
-.theme-switch input {
+.chatbot-toggle-btn .fa-times {
     display: none;
 }
 
-.slider {
-    background-color: #0d6efd;
-    bottom: 0;
-    cursor: pointer;
-    left: 0;
-    position: absolute;
-    right: 0;
-    top: 0;
-    transition: .4s;
-}
-
-.slider:before {
-    background-color: white;
-    bottom: 4px;
-    content: "";
-    height: 16px;
-    left: 4px;
-    position: absolute;
-    transition: .4s;
-    width: 16px;
-}
-
-input:checked + .slider {
-    background-color: #dc3545;
-}
-
-input:checked + .slider:before {
-    transform: translateX(26px);
-}
-
-.slider.round {
-    border-radius: 34px;
-}
-
-.slider.round:before {
-    border-radius: 50%;
-}
-
-.theme-text {
-    margin-left: 10px;
-    font-size: 0.9rem;
-    color: white;
-}
-
-.text-muted {
-    color: var(--text-muted) !important;
-}
-
-.container {
-    background: rgba(255, 255, 255, 0.5);
+.chatbot-window {
+    width: 350px;
+    max-height: 500px;
+    background-color: var(--card-bg);
     border-radius: 15px;
-    padding: 20px;
-    margin-top: 20px;
-    margin-bottom: 20px;
-    backdrop-filter: blur(5px);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.4);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    transform: scale(0.5);
+    transform-origin: bottom right;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-[data-theme="dark"] .container {
-    background: rgba(0, 0, 0, 0.5);
+.chatbot-container.active .chatbot-window {
+    transform: scale(1);
+    opacity: 1;
+    pointer-events: auto;
 }
 
-/* Location Tracking Styles */
-.location-tracing {
-    background-color: rgba(248, 249, 250, 0.7);
-    border-radius: 10px;
-    padding: 20px;
-    margin-top: 20px;
+.chatbot-container.active .chatbot-toggle-btn .fa-comment-dots {
+    display: none;
 }
 
-.tracing-controls {
+.chatbot-container.active .chatbot-toggle-btn .fa-times {
+    display: block;
+}
+
+.chatbot-header {
+    background: var(--header-bg);
+    padding: 15px;
+    color: white;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.chatbot-body {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.chatbot-body::-webkit-scrollbar {
+    width: 6px;
+}
+.chatbot-body::-webkit-scrollbar-track {
+    background: #2c2c2c;
+}
+.chatbot-body::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 3px;
+}
+
+.chat-message {
+    padding: 10px 15px;
+    border-radius: 20px;
+    max-width: 80%;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+.bot-message {
+    background-color: #343a40;
+    color: white;
+    align-self: flex-start;
+    border-bottom-left-radius: 5px;
+}
+
+.user-message {
+    background-color: var(--primary-color);
+    color: white;
+    align-self: flex-end;
+    border-bottom-right-radius: 5px;
+}
+
+.chatbot-footer {
+    padding: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#chatbot-form {
     display: flex;
     gap: 10px;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
 }
 
-.tracing-status {
-    padding: 10px;
-    border-radius: 5px;
-    margin-top: 15px;
-    font-size: 0.9rem;
+#chatbot-input {
+    flex: 1;
+    border-radius: 20px;
+    padding: 8px 15px;
+    border: 1px solid #6c757d;
 }
 
-.status-active {
-    background-color: #d4edda;
-    color: #155724;
+#chatbot-form button {
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.2s ease;
+    padding-right: 5px;
 }
 
-.status-inactive {
-    background-color: #f8d7da;
-    color: #721c24;
-}
-
-.location-details {
-    background-color: rgba(255, 255, 255, 0.5);
-    padding: 15px;
-    border-radius: 8px;
-}
-
-@media (max-width: 768px) {
-    .hero-section {
-        padding: 60px 0;
-    }
-    
-    .display-4 {
-        font-size: 2.5rem;
-    }
-    
-    .theme-switch-wrapper {
-        margin: 10px 0;
-        justify-content: center;
-    }
-    
-    .tracing-controls {
-        flex-direction: column;
-    }
-}
-/* Location Tracking Styles */
-.location-tracing {
-    background-color: rgba(248, 249, 250, 0.7);
-    border-radius: 10px;
-    padding: 20px;
-    margin-top: 20px;
-}
-
-.tracing-controls {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-    flex-wrap: wrap;
-}
-
-.tracing-status {
-    padding: 10px;
-    border-radius: 5px;
-    margin-top: 15px;
-    font-size: 0.9rem;
-}
-
-.status-active {
-    background-color: #d4edda;
-    color: #155724;
-    border: 1px solid #c3e6cb;
-}
-
-.status-inactive {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.status-error {
-    background-color: #f8d7da;
-    color: #721c24;
-    border: 1px solid #f5c6cb;
-}
-
-.status-requesting {
-    background-color: #d1ecf1;
-    color: #0c5460;
-    border: 1px solid #bee5eb;
-}
-
-.status-simulated {
-    background-color: #d1ecf1;
-    color: #0c5460;
-    border: 1px solid #bee5eb;
-}
-
-.location-details {
-    background-color: rgba(255, 255, 255, 0.5);
-    padding: 15px;
-    border-radius: 8px;
-    margin-top: 15px;
-}
-
-.user-location-icon {
-    background: transparent !important;
-    border: none !important;
-}
-
-@media (max-width: 768px) {
-    .tracing-controls {
-        flex-direction: column;
-    }
-    
-    .tracing-controls .btn {
-        width: 100%;
-    }
+#chatbot-form button:hover {
+    color: var(--secondary-color);
 }
